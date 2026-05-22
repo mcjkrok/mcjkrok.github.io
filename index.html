@@ -3,62 +3,793 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projekt | Home</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Urodzinowa Niespodzianka 🐾</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pink-light: #fff0f5;
+            --pink-soft: #ffb7b2;
+            --pink-main: #ff748c;
+            --pink-dark: #e91e63;
+            --text-dark: #5c3a45;
+            --text-light: #9e8590;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #ffe6ea 0%, #fff0f5 50%, #ffd1dc 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Urocze pływające emotki kotków w tle */
+        .bg-shapes {
+            position: fixed;
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            top: 0;
+            opacity: 0.45;
+            user-select: none;
+            will-change: transform;
+            animation-name: float;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(105vh) scale(0.8) rotate(0deg); }
+            100% { transform: translateY(-10vh) scale(1.2) rotate(360deg); }
+        }
+
+        /* Kontener główny */
+        .container {
+            max-width: 550px;
+            width: 95%;
+            margin: 40px auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .cat-avatar {
+            width: 100px;
+            height: 100px;
+            background: var(--white);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5em;
+            box-shadow: 0 10px 25px rgba(255, 116, 140, 0.2);
+            animation: gentleBounce 3s infinite ease-in-out;
+            user-select: none;
+        }
+
+        h1 {
+            color: var(--pink-dark);
+            font-weight: 900;
+            font-size: 2.2em;
+            text-shadow: 2px 2px 0px rgba(255,255,255,0.8);
+            margin-bottom: 5px;
+        }
+
+        p.subtitle {
+            color: var(--text-light);
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        /* Karty z zadaniami */
+        .task-card {
+            background: var(--white);
+            border-radius: 25px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 12px 35px rgba(255, 116, 140, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .task-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .task-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .task-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--pink-light);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.2em;
+        }
+
+        .task-card h3 {
+            color: var(--pink-main);
+            font-size: 1.3em;
+            font-weight: 800;
+        }
+
+        .task-card p.question {
+            font-size: 1.05em;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        /* --- STYLE KRZYŻÓWKI --- */
+        .crossword-overflow {
+            width: 100%;
+            overflow-x: auto;
+            padding: 10px 0;
+            margin-bottom: 15px;
+        }
+
+        .crossword-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 32px);
+            grid-template-rows: repeat(6, 32px);
+            gap: 4px;
+            justify-content: center;
+            min-width: 430px;
+        }
+
+        .cw-cell {
+            width: 32px;
+            height: 32px;
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: 900;
+            border: 2px solid #ffe1e8;
+            border-radius: 6px;
+            text-transform: uppercase;
+            outline: none;
+            color: var(--text-dark);
+            background: #fffafa;
+            transition: all 0.2s;
+        }
+
+        .cw-cell:focus {
+            border-color: var(--pink-main);
+            background: var(--white);
+            box-shadow: 0 0 8px rgba(255, 116, 140, 0.2);
+        }
+
+        .cw-cell.keyword-col {
+            background: #ffe6ea;
+            border-color: var(--pink-soft);
+        }
+        
+        .cw-cell.keyword-col:focus {
+            border-color: var(--pink-main);
+            background: var(--white);
+        }
+
+        .clues-box {
+            text-align: left;
+            margin-top: 15px;
+            background: #fffafb;
+            padding: 15px;
+            border-radius: 15px;
+            border: 1px solid #ffe8ec;
+        }
+
+        .clues-box h4 {
+            color: var(--pink-main);
+            margin-bottom: 8px;
+            font-weight: 800;
+        }
+
+        .clues-box ol {
+            padding-left: 20px;
+            color: var(--text-dark);
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .clues-box li {
+            margin-bottom: 6px;
+        }
+
+        /* Styl dla Zadania 2 (Memory) */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 15px auto;
+            max-width: 320px;
+        }
+
+        .memory-card {
+            height: 90px;
+            background: #fff0f5;
+            border: 2px solid #ffe1e8;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2em;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(255, 116, 140, 0.05);
+        }
+
+        .memory-card.flipped {
+            background: var(--white);
+            border-color: var(--pink-soft);
+            transform: scale(1.02);
+        }
+
+        /* Styl dla Zadania 3 (Klikacz) */
+        .clicker-box {
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .heart-btn {
+            font-size: 3.5em;
+            background: none;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            display: inline-block;
+            margin: 10px 0;
+            animation: pulse 1.5s infinite ease-in-out;
+            transition: transform 0.1s ease;
+        }
+
+        .heart-btn:active {
+            transform: scale(0.85);
+        }
+
+        .compliment-text {
+            font-weight: 700;
+            min-height: 50px;
+            color: var(--pink-dark);
+            margin: 10px 0;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: #ffe1e8;
+            border-radius: 20px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 12px;
+            background: linear-gradient(90deg, var(--pink-main), var(--pink-dark));
+            transition: width 0.3s ease;
+            border-radius: 20px;
+        }
+
+        /* Przyciski ogólne */
+        .btn {
+            background: linear-gradient(135deg, var(--pink-main), var(--pink-dark));
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            font-size: 1em;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(233, 30, 99, 0.3);
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(233, 30, 99, 0.4);
+        }
+
+        .digit-reveal {
+            display: none;
+            background: var(--pink-light);
+            color: var(--pink-dark);
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 15px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: 800;
+            border: 2px dashed var(--pink-soft);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .digit-reveal span {
+            font-size: 1.5em;
+            color: var(--pink-dark);
+        }
+
+        /* Sekcja kłódki */
+        .padlock-section {
+            background: linear-gradient(135deg, #ffffff, #fff0f5);
+            border-radius: 30px;
+            padding: 35px 25px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(255, 116, 140, 0.15);
+            margin-top: 30px;
+            border: 3px solid #ffe1e8;
+        }
+
+        .padlock-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .padlock-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .padlock-inputs input {
+            width: 60px;
+            height: 70px;
+            font-size: 2em;
+            text-align: center;
+            border: 2px solid var(--pink-soft);
+            border-radius: 15px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 900;
+            color: var(--pink-dark);
+            background: var(--white);
+            box-shadow: inset 0 3px 5px rgba(0,0,0,0.02);
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .padlock-inputs input:focus {
+            border-color: var(--pink-main);
+        }
+
+        /* Ekran sukcesu */
+        #success-screen {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(255, 116, 140, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+
+        #success-screen h2 {
+            color: var(--pink-dark);
+            font-size: 2.5em;
+            font-weight: 900;
+            margin: 20px 0;
+        }
+
+        #success-screen p.message {
+            font-size: 1.2em;
+            line-height: 1.6;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+
+        /* Konfetti */
+        .heart {
+            position: fixed;
+            top: -10vh;
+            font-size: 1.5em;
+            z-index: 100;
+            animation: fall linear forwards;
+        }
+
+        @keyframes gentleBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        .crossword-error {
+            animation: shake 0.4s ease-in-out;
+            background-color: #ffebee !important;
+        }
+
+        .error {
+            animation: shake 0.4s ease-in-out;
+            border-color: #ff4d4d !important;
+        }
+
+    </style>
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="container">
-            <a href="index.html" class="logo">Web<span>Master</span></a>
-            <ul class="nav-links">
-                <li><a href="index.html" class="active">Start</a></li>
-                <li><a href="o-nas.html">O nas</a></li>
-                <li><a href="#" class="nav-btn">Kontakt</a></li>
-            </ul>
+    <div class="bg-shapes" id="bg-shapes"></div>
+
+    <div class="container" id="game-container">
+        
+        <div class="header">
+            <div class="cat-avatar">😻</div>
+            <h1>Dla Kajusi!</h1>
+            <p class="subtitle">Wykonaj 3 urocze misje, aby zdobyć kod do prezentu! 💕</p>
         </div>
-    </nav>
 
-    <main>
-        <header class="hero">
-            <div class="hero-content">
-                <h1>Tworzymy Przyszłość Internetu</h1>
-                <p>Profesjonalny projekt wykonany z dbałością o każdy detal i standardy UX.</p>
-                <a href="o-nas.html" class="btn-primary">Dowiedz się więcej</a>
+        <div class="task-card">
+            <div class="task-header">
+                <div class="task-icon">🧩</div>
+                <h3>Misja 1: Słowo-Klucz</h3>
             </div>
-        </header>
+            <p class="question">Rozwiąż krzyżówkę, by ułożyć pionowe hasło i zdobyć pierwszą cyfrę kłódki!</p>
+            
+            <div class="crossword-overflow">
+                <div class="crossword-grid" id="cw-grid">
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:1; grid-column:4;" id="cell_1_4" data-next="1_5">
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:1; grid-column:5;" id="cell_1_5" data-next="1_6">
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:1; grid-column:6;" id="cell_1_6" data-next="1_7">
+                    <input type="text" maxlength="1" class="cw-cell keyword-col" style="grid-row:1; grid-column:7;" id="cell_1_7" data-next="2_3" placeholder="1">
 
-        <section id="features" class="container">
-            <div class="section-title">
-                <h2>Nasze Usługi</h2>
-                <div class="underline"></div>
-            </div>
-            <div class="grid">
-                <div class="card">
-                    <h3>Design</h3>
-                    <p>Nowoczesne układy graficzne dostosowane do urządzeń mobilnych.</p>
-                </div>
-                <div class="card">
-                    <h3>Kodowanie</h3>
-                    <p>Czysty i semantyczny kod HTML5 oraz wydajny CSS3.</p>
-                </div>
-                <div class="card">
-                    <h3>Marketing</h3>
-                    <p>Pozycjonowanie stron i optymalizacja pod wyszukiwarki.</p>
-                </div>
-            </div>
-        </section>
-    </main>
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:2; grid-column:3;" id="cell_2_3" data-next="2_4">
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:2; grid-column:4;" id="cell_2_4" data-next="2_5">
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:2; grid-column:5;" id="cell_2_5" data-next="2_6">
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:2; grid-column:6;" id="cell_2_6" data-next="2_7">
+                    <input type="text" maxlength="1" class="cw-cell keyword-col" style="grid-row:2; grid-column:7;" id="cell_2_7" data-next="2_8" placeholder="2">
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:2; grid-column:8;" id="cell_2_8" data-next="3_4">
 
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2026 Projekt na Zaliczenie. Wszelkie prawa zastrzeżone.</p>
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:3; grid-column:4;" id="cell_3_4" data-next="3_5">
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:3; grid-column:5;" id="cell_3_5" data-next="3_6">
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:3; grid-column:6;" id="cell_3_6" data-next="3_7">
+                    <input type="text" maxlength="1" class="cw-cell keyword-col" style="grid-row:3; grid-column:7;" id="cell_3_7" data-next="3_8" placeholder="3">
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:3; grid-column:8;" id="cell_3_8" data-next="4_2">
+
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:4; grid-column:2;" id="cell_4_2" data-next="4_3">
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:4; grid-column:3;" id="cell_4_3" data-next="4_4">
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:4; grid-column:4;" id="cell_4_4" data-next="4_5">
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:4; grid-column:5;" id="cell_4_5" data-next="4_6">
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:4; grid-column:6;" id="cell_4_6" data-next="4_7">
+                    <input type="text" maxlength="1" class="cw-cell keyword-col" style="grid-row:4; grid-column:7;" id="cell_4_7" data-next="4_8" placeholder="4">
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:4; grid-column:8;" id="cell_4_8" data-next="5_5">
+
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:5; grid-column:5;" id="cell_5_5" data-next="5_6">
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:5; grid-column:6;" id="cell_5_6" data-next="5_7">
+                    <input type="text" maxlength="1" class="cw-cell keyword-col" style="grid-row:5; grid-column:7;" id="cell_5_7" data-next="5_8" placeholder="5">
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:5; grid-column:8;" id="cell_5_8" data-next="5_9">
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:5; grid-column:9;" id="cell_5_9" data-next="5_10">
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:5; grid-column:10;" id="cell_5_10" data-next="6_3">
+
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:6; grid-column:3;" id="cell_6_3" data-next="6_4">
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:6; grid-column:4;" id="cell_6_4" data-next="6_5">
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:6; grid-column:5;" id="cell_6_5" data-next="6_6">
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:6; grid-column:6;" id="cell_6_6" data-next="6_7">
+                    <input type="text" maxlength="1" class="cw-cell keyword-col" style="grid-row:6; grid-column:7;" id="cell_6_7" data-next="6_8" placeholder="6">
+                    <input type="text" maxlength="1" class="cw-cell" style="grid-row:6; grid-column:8;" id="cell_6_8">
+                </div>
+            </div>
+
+            <div class="clues-box">
+                <h4>Wskazówki:</h4>
+                <ol>
+                    <li>Kultowy zielony ogr z hitu kinowego, który udowodnił światu, że cebula ma warstwy, a prawdziwa miłość nie zależy od wyglądu.</li>
+                    <li>Nieskończona przestrzeń pełna gwiazd, galaktyk i planet – zupełnie jak moje uczucie do Ciebie, nie ma granic!</li>
+                    <li>Uniwersalny symbol miłości i życia, który bije znacznie mocniej, kiedy tylko pojawiasz się w pobliżu.</li>
+                    <li>Najpopularniejsza platforma filmowa, idealna na wieczorny seans pod ciepłym kocykiem we dwoje.</li>
+                    <li>Zimowy, miękki element garderoby owijany wokół szyi chroniący przed mrozem (choć i tak najlepiej rozgrzewają Twoje przytulaski!).</li>
+                    <li>Sztuka układania dźwięków, która towarzyszy nam w aucie, na słuchawkach i potrafi błyskawicznie poprawić humor w każdy dzień.</li>
+                </ol>
+            </div>
+
+            <button class="btn" style="width: 100%; margin-top: 15px;" onclick="checkCrossword()">Sprawdź krzyżówkę</button>
+            <div class="digit-reveal" id="reveal1">Wspaniale! Głównym hasłem był <strong>KOCIAK</strong>! Pierwsza cyfra kodu zdobyta: <span>3</span> 💖</div>
         </div>
-    </footer>
 
+        <div class="task-card">
+            <div class="task-header">
+                <div class="task-icon">🎮</div>
+                <h3>Misja 2: Kocie Memory</h3>
+            </div>
+            <p class="question">Znajdź 3 pary zakochanych kotków, aby odblokować drugą cyfrę kłódki!</p>
+            
+            <div class="memory-grid" id="memory-board">
+                </div>
+
+            <div class="digit-reveal" id="reveal2">Druga cyfra kłódki zdobyta: <span>7</span> 🧶</div>
+        </div>
+
+        <div class="task-card">
+            <div class="task-header">
+                <div class="task-icon">❤️</div>
+                <h3>Misja 3: Iskierka Miłości</h3>
+            </div>
+            <p class="question">Klikaj w pulsujące serduszko, aby odkryć powody, dla których jesteś najwspanialsza na świecie!</p>
+            
+            <div class="clicker-box">
+                <button class="heart-btn" id="heart-clicker" onclick="clickHeart()">💝</button>
+                <div class="compliment-text" id="compliment-box">Kliknij serduszko, aby zacząć... 🥰</div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar" id="love-bar"></div>
+                </div>
+            </div>
+
+            <div class="digit-reveal" id="reveal3">Ostatnia cyfra kłódki zdobyta: <span>2</span> 🐈</div>
+        </div>
+
+        <div class="padlock-section">
+            <div class="padlock-icon">🔒</div>
+            <h3 style="color: var(--pink-dark); font-size: 1.5em; font-weight: 800;">Otwórz Kłódkę</h3>
+            <p style="color: var(--text-light); margin-top: 5px;">Wprowadź 3 zdobyte cyfry</p>
+            
+            <div class="padlock-inputs">
+                <input type="tel" id="p1" maxlength="1" oninput="moveToNext(this, 'p2')">
+                <input type="tel" id="p2" maxlength="1" oninput="moveToNext(this, 'p3')" onkeyup="moveToPrev(event, 'p1')">
+                <input type="tel" id="p3" maxlength="1" onkeyup="moveToPrev(event, 'p2')">
+            </div>
+            
+            <button class="btn" style="width: 100%; padding: 15px; font-size: 1.2em;" onclick="unlock()">Otwórz prezent!</button>
+            <p id="error-msg" style="color: #e91e63; font-weight: 700; margin-top: 15px; display: none; animation: popIn 0.3s ease;">Zły kod skarbie, spróbuj jeszcze raz! 🥺</p>
+        </div>
+
+    </div>
+
+    <div id="success-screen" class="container">
+        <h1 style="font-size: 4em; margin: 0;">🎉</h1>
+        <h2>Udało się, Kochanie!</h2>
+        <p class="message">
+            Rozwiązałaś wszystkie zadania idealnie!<br><br>
+            <strong>Wszystkiego Najlepszego z okazji urodzin! 🎂🌷</strong><br><br>
+            Zasługujesz na wszystko co najlepsze. Prezent otrzymasz po złożeniu opłaty w: <br>
+            <span style="color: var(--pink-main); font-weight: 800;">BUZIAKACH</span>
+        </p>
+        <p style="color: var(--pink-dark); font-weight: 900; font-size: 1.5em; margin-top: 30px;">Kocham Cię! ❤️</p>
+    </div>
+
+    <script>
+        // --- 1. GENEROWANIE TŁA ---
+        const bgContainer = document.getElementById('bg-shapes');
+        const catEmojis = ['🐱', '🐈', '😻', '😽', '🐾', '🐈‍⬛', '😸', '😸', '😺'];
+
+        for (let i = 0; i < 20; i++) {
+            let shape = document.createElement('div');
+            shape.classList.add('shape');
+            shape.innerText = catEmojis[Math.floor(Math.random() * catEmojis.length)];
+            let size = Math.random() * 20 + 22;
+            shape.style.fontSize = size + 'px';
+            shape.style.left = Math.random() * 100 + 'vw';
+            shape.style.animationDuration = (Math.random() * 10 + 15) + 's';
+            shape.style.animationDelay = '-' + (Math.random() * 25) + 's';
+            bgContainer.appendChild(shape);
+        }
+
+        // --- AUTOMATYCZNE PRZECHODZENIE W KRZYŻÓWCE ---
+        const cells = document.querySelectorAll('.cw-cell');
+        cells.forEach(cell => {
+            cell.addEventListener('input', function() {
+                if (this.value.length >= 1) {
+                    const nextId = this.getAttribute('data-next');
+                    if (nextId) {
+                        const nextCell = document.getElementById('cell_' + nextId);
+                        if (nextCell) nextCell.focus();
+                    }
+                }
+            });
+        });
+
+        // --- 2. MISJA 1 LOGIKA (KRZYŻÓWKA) ---
+        function checkCrossword() {
+            const l1 = document.getElementById('cell_1_7').value.trim().toLowerCase();
+            const l2 = document.getElementById('cell_2_7').value.trim().toLowerCase();
+            const l3 = document.getElementById('cell_3_7').value.trim().toLowerCase();
+            const l4 = document.getElementById('cell_4_7').value.trim().toLowerCase();
+            const l5 = document.getElementById('cell_5_7').value.trim().toLowerCase();
+            const l6 = document.getElementById('cell_6_7').value.trim().toLowerCase();
+
+            const word = l1 + l2 + l3 + l4 + l5 + l6;
+
+            if (word === "kociak") {
+                cells.forEach(c => {
+                    c.disabled = true;
+                    c.style.borderColor = '#4CAF50';
+                });
+                document.getElementById('reveal1').style.display = 'block';
+            } else {
+                const keywordCells = document.querySelectorAll('.cw-cell.keyword-col');
+                keywordCells.forEach(cell => {
+                    cell.classList.remove('crossword-error');
+                    void cell.offsetWidth;
+                    cell.classList.add('crossword-error');
+                });
+            }
+        }
+
+        // --- 3. MISJA 2 LOGIKA (MEMORY GAME) ---
+        const icons = ['🐱', '😻', '😽', '🐱', '😻', '😽'];
+        icons.sort(() => 0.5 - Math.random());
+
+        const board = document.getElementById('memory-board');
+        let chosenCards = [];
+        let chosenCardsIds = [];
+        let cardsWonCount = 0;
+
+        function createBoard() {
+            for (let i = 0; i < icons.length; i++) {
+                const card = document.createElement('div');
+                card.classList.add('memory-card');
+                card.setAttribute('data-id', i);
+                card.innerText = '💝';
+                card.addEventListener('click', flipCard);
+                board.appendChild(card);
+            }
+        }
+
+        function flipCard() {
+            let cardId = this.getAttribute('data-id');
+            if (chosenCardsIds.includes(cardId) || this.classList.contains('flipped-matched')) return;
+
+            this.innerText = icons[cardId];
+            this.classList.add('flipped');
+            chosenCards.push(icons[cardId]);
+            chosenCardsIds.push(cardId);
+
+            if (chosenCards.length === 2) {
+                setTimeout(checkForMatch, 500);
+            }
+        }
+
+        function checkForMatch() {
+            const cards = document.querySelectorAll('.memory-card');
+            const optionOneId = chosenCardsIds[0];
+            const optionTwoId = chosenCardsIds[1];
+
+            if (chosenCards[0] === chosenCards[1]) {
+                cards[optionOneId].classList.add('flipped-matched');
+                cards[optionTwoId].classList.add('flipped-matched');
+                cards[optionOneId].style.backgroundColor = '#e8f5e9';
+                cards[optionTwoId].style.backgroundColor = '#e8f5e9';
+                cardsWonCount++;
+                
+                if (cardsWonCount === icons.length / 2) {
+                    document.getElementById('reveal2').style.display = 'block';
+                }
+            } else {
+                cards[optionOneId].innerText = '💝';
+                cards[optionTwoId].innerText = '💝';
+                cards[optionOneId].classList.remove('flipped');
+                cards[optionTwoId].classList.remove('flipped');
+            }
+            chosenCards = [];
+            chosenCardsIds = [];
+        }
+        createBoard();
+
+        // --- 4. MISJA 3 LOGIKA (KLIKACZ KOMPLEMENTÓW) ---
+        let clickCount = 0;
+        const compliments = [
+            "Auuuuu! Jesteś najpiękniejszą kobietą na całym świecie! 🌸",
+            "Twoje przytulaski to najlepsze lekarstwo na gorszy dzień! 🧸",
+            "Uwielbiam Twój uroczy uśmiech i poczucie humoru! ☀️",
+            "Nooooo! DOBRA Piękna, cudowna jesteś. 💖",
+            "Dziękuję, że po prostu jesteś. Mega się cieszę, że Cię mam! 🥰"
+        ];
+
+        function clickHeart() {
+            if (clickCount >= 5) return;
+
+            const complimentBox = document.getElementById('compliment-box');
+            const loveBar = document.getElementById('love-bar');
+            
+            complimentBox.innerText = compliments[clickCount];
+            clickCount++;
+            
+            let progressPercent = (clickCount / 5) * 100;
+            loveBar.style.width = progressPercent + '%';
+
+            if (clickCount === 5) {
+                document.getElementById('heart-clicker').innerText = '💖';
+                document.getElementById('reveal3').style.display = 'block';
+            }
+        }
+
+        // --- 5. LOGIKA KŁÓDKI ---
+        function moveToNext(current, nextId) {
+            if (current.value.length >= 1) {
+                document.getElementById(nextId).focus();
+            }
+        }
+
+        function moveToPrev(event, prevId) {
+            if (event.key === "Backspace" && event.target.value === "") {
+                document.getElementById(prevId).focus();
+            }
+        }
+
+        function unlock() {
+            const code = document.getElementById('p1').value + 
+                         document.getElementById('p2').value + 
+                         document.getElementById('p3').value;
+            
+            const errorMsg = document.getElementById('error-msg');
+
+            if (code === "372") {
+                document.getElementById('game-container').style.display = 'none';
+                document.getElementById('success-screen').style.display = 'block';
+                startConfetti();
+            } else {
+                errorMsg.style.display = 'block';
+                setTimeout(() => { errorMsg.style.display = 'none'; }, 3000);
+            }
+        }
+
+        // Deszcz serduszek (Konfetti)
+        function startConfetti() {
+            const emojis = ['❤️', '💖', '🐾', '🌸', '✨', '🐱', '😻'];
+            for (let i = 0; i < 70; i++) {
+                setTimeout(() => {
+                    let heart = document.createElement('div');
+                    heart.classList.add('heart');
+                    heart.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                    heart.style.left = Math.random() * 100 + 'vw';
+                    heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                    heart.style.fontSize = (Math.random() * 1.5 + 1) + 'em';
+                    document.body.appendChild(heart);
+
+                    setTimeout(() => { heart.remove(); }, 5000);
+                }, i * 100);
+            }
+        }
+    </script>
 </body>
 </html>
-
-
-
